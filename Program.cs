@@ -16,6 +16,25 @@ class FlexBuilder {
         Console.WriteLine("Made by Syclon");
         Console.WriteLine("");
 
+        if (args.Length == 0)
+        {
+            Console.WriteLine("ERROR!");
+            Console.WriteLine("You did not drag and drop a .vta file!");
+            Console.WriteLine("");
+            Console.WriteLine("Please press enter or close this application to try again!");
+            Console.ReadLine();
+            return;
+        }
+        else if (!args[0].EndsWith(".vta"))
+        {
+            Console.WriteLine("ERROR!");
+            Console.WriteLine("You dragged and dropped a file that isn't a .vta file! The file you're going to drag and drop MUST be a .vta file!");
+            Console.WriteLine("");
+            Console.WriteLine("Please press enter or close this application to try again!");
+            Console.ReadLine();
+            return;
+        }
+
         // Read the VTA file
         string path = args[0];
 
@@ -48,7 +67,7 @@ class FlexBuilder {
         // Write the first line (flexline "something.vta" {)
         List<string> newText = new List<string>();
         newText.Add("{");
-        newText.Add(string.Format("    flexline \"{0}\" {{", Path.GetFileName(path)));
+        newText.Add(string.Format("    flexfile \"{0}\" {{", Path.GetFileName(path)));
 
         // Write the second line (defaultflex frame 0)
         newText.Add("       defaultflex frame 0");
@@ -60,7 +79,7 @@ class FlexBuilder {
         }
 
         // Write the closing bracket and flex controllers (and also ask the user what the flexes should be called ingame)
-        newText.Add("}");
+        newText.Add("   }");
 
         List<string> flex = new List<string>();
         for (int i = firstIndex + 1; i < lastIndex; i++)
@@ -71,7 +90,8 @@ class FlexBuilder {
             flex.Add(string.Format("\"{0}\"", response));
         }
 
-        newText.Add(string.Format("    flexcontroller flex {0}", string.Join(", ", flex)));
+        string frameFlexText = string.Join(", ", flex);
+        newText.Add(string.Format("    flexcontroller flex {0}", frameFlexText.Replace(',', ' ')));
 
         for (int i = firstIndex + 1; i < lastIndex; i++)
         {
